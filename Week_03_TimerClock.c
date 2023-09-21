@@ -3,7 +3,7 @@
 #include <util/delay.h>
 
 unsigned char digit[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7C, 0x07, 0x7F, 0x67};
-unsigned char fnd_sel[4] = {0x01, 0x02, 0x04, 0x08};
+// unsigned char fnd_sel[4] = {0x01, 0x02, 0x04, 0x08}; // NO NEED FOR THIS, can automate values
 unsigned char fnd[4];
 
 
@@ -18,6 +18,9 @@ void num2time(unsigned char arr[], unsigned int time){
 
 }
 
+int ensureSafeInt(int n, int lim){
+	return n % lim ;
+}
 
 int main(){
 	
@@ -25,39 +28,80 @@ int main(){
 	DDRC = 0xFF;
 	DDRG = 0x0F;
 	
-	int i = 0 ;
-	int on = 1, remains = 0;
+	
+	// SETTINGS
+	
+	// start is meant for debug, gives a feined start, not at 0 all the time
+	unsigned int start = toSeconds(0, 0);
+	
+	// Variable speed (243 closest to actual seconds here)	set to 5 in order to go real fast (chronometer-like)
+	int speed = 243 ;
 
-	unsigned int start = toSeconds(59, 57);
+	// easy blinking cancelling if set to 0;
+	int blink = 1;	
+
+	// default to all off -> disable for blinking effect
+	int def = 0x00 ;	
+
+
+	// REQUIRED
+
+	// unsigned is necessary in order to get highest possible numbers
 	unsigned int t = start;
 	unsigned int cnt = 0;
 	
-	while(1){
-		
-		cnt = (cnt >= 3600) ? 0 : cnt + 1;		// ensure count is not incrementing until reaches unsigned int overflow
+	// blinking effect related
+	int on = 1, remains = 0;
+	int limit = 3600;
+	
 
-		if(cnt % 360 == 0) { t = (t >= 3600) ? 1 : t + 1 ;}			// set a different timer
+	while(++cnt){
 		
-		remains = cnt % 360 ; 					// remainer of fraction of second (here 1 second is 360 subseconds !!)
-		// on = remains < 180; 
-		on = 1;
+		// ensure count is not incrementing until reaches unsigned int overflow
+		
+		cnt = ensureSafeInt(cnt, speed) ;
 
-		num2time(fnd, t); 					// setting the array of time values
+		// set a dedicated timer
+		if(cnt % speed == 0) { 
+			t = ensureSafeInt(t+1, limit) ;
+		}
+		
+		if(blink){
+			// remainer of fraction of second
+			remains = cnt % speed;
+		
+			// decide if blinking should be ON or OFF (50% or more of a second ? -> set to black)
+			on = remains < (speed >> 1);
+		}else{
+			on = 1;
+		}
 		
 		
+		// setting the array of time values
+		num2time(fnd, t);
+		
 
-		int def =0x00 ;
-		int def2 = 0x00 ;
-
-		for(i = 0 ; i < 4 ; i++){
-			PORTC = on ? digit[fnd[i]] : def;
-			PORTG = on ? fnd_sel[i] : def2 ;
+		for(int i = 0 ; i < 4 ; i++){
 			
-			_delay_ms(1);
+			// switching digit display
+			int s = 0x01 << i;
+			
+			// finding right digit in bytelist
+			int d = digit[fnd[i]] ;
+
+			if(i == 2) d |= 0x80 ; 		// have to OR this with 128 in order to spawn the dot
+										// = change MSB to high (128 = 0b10000000 = 0x80)
+			PORTC = on ? d : def;  
+			PORTG = on ? fnd_sel[i] : def ;
+			
+			_delay_ms(1); 				// delay 1 is what i found the least annoying for blinking time calculation with seconds
 		}
 		
 
 	};
-	
-}
 
+   
+
+
+
+}
