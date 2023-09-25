@@ -92,7 +92,7 @@ int main(){
 			if(i == 2) d |= 0x80 ; 		// have to OR this with 128 in order to spawn the dot
 										// = change MSB to high (128 = 0b10000000 = 0x80)
 			PORTC = on ? d : def;  
-			PORTG = on ? fnd_sel[i] : def ;
+			PORTG = on ? s : def ;
 			
 			_delay_ms(1); 				// delay 1 is what i found the least annoying for blinking time calculation with seconds
 		}
