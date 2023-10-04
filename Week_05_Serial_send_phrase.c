@@ -11,13 +11,25 @@ void putchar0(char c){
 
 }
 
+/*
+helpers JS console :
+
+function h2b(hex){
+    return ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8);
+}
+// todos 
+// find other transdatas
+*/
+
 
 int main(){
 	
 
 
+/*
 
-
+	// Example 1
+ 	
 	int i ;
 	char data[] = "Hi~\n\r";
 
@@ -38,5 +50,33 @@ int main(){
 		}
 	
 	}
+
+*/
+	
+
+	int i ;
+	char data[] = "Seize the day!\n\r";
+
+	
+	// means 12 bit
+
+	UBRR0H = 0 ; 
+	UBRR0L = 103 ; // Refer to ATmega128 Datasheet, 16MHZ, 9600 Baud
+	
+	UCSR0B = 0x08 ; // Enabling Transmit (TX)
+	UCSR0C = 0x2E ; // UART Mode, 8-bit Data, Even Parity, 2 Stop Bit
+	
+
+
+	while(1){
+		i = 0 ;
+
+		while(data[i]!= NULL){ // Append (Send) Character until there is none left.
+			putchar0(data[i++]);
+		}
+	
+	}
+
+	
 
 }
