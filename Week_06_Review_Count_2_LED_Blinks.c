@@ -6,7 +6,6 @@ unsigned char digit[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7C, 0x07, 0x7F,
 unsigned char fnd[4];
 
 
-unsigned int toSeconds(int m, int s){ return m * 60 + s ; }
 
 void num2time(unsigned char arr[], unsigned int time){
 	
@@ -35,28 +34,19 @@ int main(){
 	
 	// SETTINGS
 	
-	// start is meant for debug, gives a feined start, not at 0 all the time
-	unsigned int start = toSeconds(0, 0);
 	
 	// Variable speed (243 closest to actual seconds here)	set to 5 in order to go real fast (chronometer-like)
 	int speed = 122 ;
-
-	// easy blinking cancelling if set to 0;
-	int blink = 1;	
-
-	// default to all off -> disable for blinking effect
-	int def = 0x00 ;	
+	int limit = 3600;
 
 
 	// REQUIRED
 
 	// unsigned is necessary in order to get highest possible numbers
-	unsigned int t = start;
+	unsigned int t = 0;
 	unsigned int cnt = 0;
 	
-	// blinking effect related
-	int on = 1;
-	int limit = 3600;
+	
 	
 	while(++cnt){
 		
@@ -71,10 +61,6 @@ int main(){
 		if(cnt % speed == 0) { 
 			t = ensureSafeInt(t+1, limit) ;
 		}
-		
-		on = 1 ;
-
-
 		
 		
 		// setting the array of time values
