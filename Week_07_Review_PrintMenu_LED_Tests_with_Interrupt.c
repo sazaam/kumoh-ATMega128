@@ -9,6 +9,11 @@ unsigned char fnd_sel[4] = {0x01,0x02,0x04,0x08};
 static int putchar0(char c, FILE *stream);
 static FILE mystdout = FDEV_SETUP_STREAM(putchar0, NULL, _FDEV_SETUP_WRITE);
 
+
+
+volatile unsigned char c;
+
+
 int putchar0(char c, FILE *stream)
 {
 
@@ -47,11 +52,11 @@ ISR(USART0_RX_vect){
 
 void init_uart()
 {
-	UBRR0H = 0;
-	UBRR0L = 8;
+	UBRR0H = 0; // 
+	UBRR0L = 8; // Baud => 115200
 
-	UCSR0B = 0x18;
-	UCSR0B = 0x98;
+	//UCSR0B = 0x18; interrupt not use
+	UCSR0B = 0x98; // use
 
 
 	UCSR0C = 0x06;
@@ -87,10 +92,10 @@ int main()
 		} else if(c == '2'){
 			PORTA = 0x00;
             c = 0;
-			_delay_ms(3000);
+			_delay_ms(1000);
 		} else if(c == '3'){	
             printf("3. Exiting...\n");
-			UCSR0B = 0x18 ;
+			UCSR0B = 0x18 ; // stop using interrupt
             return ;
 		}
 	}
