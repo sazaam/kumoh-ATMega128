@@ -5,16 +5,19 @@
 #define F_CPU 16000000UL
 #include <util/delay.h>
 
-
 #define MAX 8
+
 volatile unsigned char sw = 0, off = 0;
 volatile unsigned int ct = 0;
 
 unsigned char digit[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7C, 0x07, 0x7F, 0x67};
-unsigned char fnd[4];
+unsigned int Up[2] = {0x3E, 0x73} , Dn[2] = {0x5E, 0x54};  // UP & DOWN Letters
 
-#define MS 250
 
+#define INTERVAL 50
+
+
+////////////////// INTERRUPTS
 ISR(INT4_vect){
     cli();
     sw = 1;
@@ -26,9 +29,14 @@ ISR(INT5_vect){
     sw = 2;
     sei();
 }
+////////////////// END INTERRUPTS
 
-int Up[2] = {0x3E, 0x73} , Dn[2] = {0x5E, 0x54};
-int interval = 50 ;
+
+
+////////////////// COUNTING LOOP
+
+
+
 int displayCount(int upwards){
 	
 	int time = 0 ;
@@ -36,7 +44,7 @@ int displayCount(int upwards){
 	while(1){
 		
 		time ++;
-		if(time % interval == 0){
+		if(time % INTERVAL == 0){
 			ct ++ ;
 			ct = ct %10 ;
 			time = 0 ;
@@ -55,13 +63,16 @@ int displayCount(int upwards){
 			_delay_ms(2) ;
 		}
 		///////// END 7-SEGMENT
-		if(ct == 9 && time > interval - 2)
+		if(ct == 9 && time > INTERVAL - 2)
 			break ;
         
     }
 	return exiting();
 
 }
+////////////////// END COUNTING LOOP
+
+
 void display(int n, int d){
 	PORTC = d ;  
 	PORTG = 0x01 << n ;
@@ -95,32 +106,30 @@ int settings(){
 	EICRB 				= 0x0A ;
 	EIMSK 				= 0x30 ;
 	
+	sei() ;
+
     return 0;
 	
 }
-
+/////////////////// INTERRUPT LOGIC
 int order[2] = {0}, uporder[2] = {1, 2} ; 
-
 int compareOrders(){
-	
 	int matches = 1;
 	for(int i = 0 ; i < 2 ; i++){
 		matches &= (order[i] == uporder[i]) ;
 	}
-
 	return matches ;	
 }
-
+/////////////////// END INTERRUPT LOGIC
 
 int main(){
 	
 	settings() ;
 	
-	sei() ;
 	
 	
-	int n = 0;
-	int marked = 0;
+	int n = 0;			// counter for array entries	
+	int marked = 0; 	// already set or not
 	while(1){
 		
 		if(n == 2){
