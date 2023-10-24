@@ -32,10 +32,12 @@ char getchar0(){
 
 //////// SETTINGS
 void init_uart(){
+	//DDRA = 0xFF;
+	
 	UBRR0H = 0;
 	UBRR0L = 8;
 
-	UCSR0B = 0x18;
+	UCSR0B = 0x98;
 	UCSR0C = 0x06;
 }
 //////// END SETTINGS
@@ -46,7 +48,7 @@ void init_uart(){
 
 int main(){
 	
-    char c; int i = 0, max = 10;
+    char c; int max = 10;
 	//////// Settings
 	init_uart();
     //////// Printf Localizing
@@ -63,13 +65,13 @@ int main(){
 		c = getchar0() ;
         printf("%c\n", c);
 		
-        c = c - 0;
-		
+        c = c - '0';
+
 		if(c > 1 && c < max){
-			for(int i = 0 ; i < max; i++){
-                printf("\t%d x %d = %d\n", c, i, c*i);
-            }
+			for(int i = 0 ; i < max; i++) printf("\t%d x %d = %d\n", c, i, c*i);
 		}
+		
+		
 
 
 	}
