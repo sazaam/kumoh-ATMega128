@@ -81,7 +81,7 @@ void display(int n, int d){
 
 int exiting(){
 	off = 1 ;
-	for(int i = 0 ; i < 4 ; i++) {display(i, 0x0);_delay_ms(2);}
+	for(int i = 0 ; i < 4 ; i++) {display(i, 0x0);}
 	DDRC = 0x0 ;
 	DDRG = 0x0;
 	
