@@ -1,6 +1,6 @@
 #include <avr/io.h>
 
-#define F_CPU 16000000 UL
+#define F_CPU 16000000UL
 
 #include <avr/interrupt.h>
 
@@ -14,9 +14,6 @@ ISR(TIMER2_COMP_vect){
 void motor(int sec, int duty_cycle){
 	
 
-	255 / 10 * 1 = 26;
-	255 / 10 * 2 = 51;
-	
 
 	int speed = (255 / 10 * duty_cycle) ;
 
