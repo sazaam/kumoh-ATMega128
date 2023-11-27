@@ -2,7 +2,7 @@
 
 #define F_CPU 16000000 UL
 
-#include <util/delay.h>
+#include <avr/interrupt.h>
 
 #define LO		128
 #define MID		77
