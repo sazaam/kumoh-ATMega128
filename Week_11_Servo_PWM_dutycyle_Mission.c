@@ -4,10 +4,6 @@
 
 #include <avr/interrupt.h>
 
-#define LO		128
-#define MID		77
-#define HI 		26
-
 volatile unsigned int ct = 0 ;
 
 
