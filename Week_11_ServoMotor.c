@@ -1,11 +1,11 @@
 #include <avr/io.h>
 
-#define F_CPU 16000000 UL
+#define F_CPU 16000000UL
 
 #include <util/delay.h>
 
 #define MOTOR_CW	0x80	// 10
-#define MOTOR_XCW	0x40	// 01
+#define MOTOR_CCW	0x40	// 01
 #define MOTOR_STOP1 0x00	// 00
 #define MOTOR_STOP2 0xC0	// 11
 
@@ -23,7 +23,7 @@ int main(){
 	
 	DDRB = 0xFF ;
 
-	while(true){
+	while(1){
 		PORTB = MOTOR_CW ;
 		_delay_ms(3) ;
 		PORTB = MOTOR_STOP1 ;
