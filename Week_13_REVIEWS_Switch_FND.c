@@ -107,7 +107,7 @@ int settings(){
 
 
 	/* INT */
-	EICRB 				= 0x0A ;
+	EICRB 				= 0x0B ; // Rising 5 + Falling 4 => 1011 
 	EIMSK 				= 0x30 ;
 	
 	sei() ;
