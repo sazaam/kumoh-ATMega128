@@ -129,6 +129,7 @@ void check(unsigned char c){
 }
 void reset(){
 	cta = ctA = cto = 0 ;
+	wnum = 0 ;
 	clear_mem() ;
     printf("\nPlease Input a Sentence :") ;
 }
@@ -137,10 +138,12 @@ void evaluate(){
 	// debug_mem() ; // if needed
 
 	if(checkEnd()) return exiting();
-	
+	/*
 	printf("\n[lowercase] : %d\n", cta) ;
 	printf("\n[UPPERCASE] : %d\n", ctA) ;
 	printf("\n[!@#$~] : %d\n", cto) ;
+	*/
+	printf("\n >> number of words : %d\n", wnum + 1) ;
 }
 /////////////////////// END PROGRAM LOGIC
 
