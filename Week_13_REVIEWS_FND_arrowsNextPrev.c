@@ -6,14 +6,16 @@
 volatile unsigned int tick_cnt=0;
 volatile unsigned int speed=700;
 
+int fnd[2] = {112, 70} ;
+
 
 #define MAX 4
 #define UP 1
 #define DOWN 0
 #define IDLE 2
 
-volatile unsigned int ind;
-volatile unsigned int way = 0 ;
+volatile unsigned int ind = -1;
+volatile unsigned int way = IDLE , lastway = IDLE ;
 volatile unsigned already = -1 ;
 
 int test = 0x01 ;
@@ -22,7 +24,7 @@ int test = 0x01 ;
 ISR(INT4_vect){ 
 	cli();
 
-	way = way == UP ? IDLE : UP ;	
+	way = way == DOWN ? IDLE : DOWN ;
 	_delay_ms(1);
 	
 	
@@ -30,13 +32,24 @@ ISR(INT4_vect){
 }
 ISR(INT5_vect){ 
 	cli();
-	
-	way = way == DOWN ? IDLE : DOWN ;	
+	way = way == UP ? IDLE : UP ;	
+		
 	_delay_ms(1);
 
 	sei();
 }
 ////////////////////////// END SWITCHES
+
+
+
+////////////////// DIRECTION
+
+void changeindex(int n){ ind = (MAX + (ind + n)) % MAX ; } ;
+void upindex() { changeindex(1) ; };
+void downindex() { changeindex(-1) ; };
+
+////////////////// END DIRECTION
+
 
 
 ////////////////// TIMER INTERRUPT
@@ -49,32 +62,30 @@ ISR(TIMER0_OVF_vect)
 
 		
 		// if enabled
-		
-
-
-		// update index
-
+		if(way != IDLE){
+			// update index
+			way == UP ? upindex() : downindex() ;
+			lastway = way ;
+		}
 
 	}
-
-	for(int i = 0 ; i < MAX ; i++){
-		
-		
-	}
+	
+	
 }
 ////////////////// END TIMER INTERRUPT
 
 
 
-
-////////////////// DIRECTION
-
-void changeindex(int n){ ind = (MAX + (ind + n)) % MAX ; } ;
-void upindex() { changeindex(1) ; };
-void downindex() { changeindex(-1) ; };
-
-////////////////// END DIRECTION
-
+void displayArrows(){
+	
+	
+	for(int i = 0 ; i < MAX ; i++){
+	
+		if(i == ind) display(i, fnd[lastway]) ;
+		else display(i, 64);
+	
+	}
+}
 
 
 
@@ -119,11 +130,9 @@ int settings(){
 int main() {
 	
 	settings() ;
-	
-	while(1) {
-		
-		PORTA = 0xFF ;
-		
+	while(1){
+		displayArrows() ;
+	};
 
-	}
+
 }
