@@ -28,14 +28,17 @@ volatile unsigned char c, oldc;
 volatile unsigned char cta = 0, ctA = 0, cto = 0;
 
 
+volatile unsigned int wnum = 0;
+
+
 
 //////////////////////// MEMORY HANDLING
 int mem_push(int n){
 	
-	for(int i = -1; i < 25 ; i++){
+	for(int i = -1; i < MAX_CHAR ; i++){
 		if(i == -1){
 			oldc = mem[0] ;
-		}else if(i == (25-1)){
+		}else if(i == (MAX_CHAR-1)){
 			mem[i] = n ;
 		}else mem[i] = mem[i+1] ;
 	}
@@ -44,9 +47,9 @@ int mem_push(int n){
 
 int mem_back(){
 	int n = 0;
-	for(int i = 25; i >= 0 ; i--){
+	for(int i = MAX_CHAR; i >= 0 ; i--){
 		if(i == 0) mem[0] = oldc ;
-		else if(i == 25) n = mem[i-1] ;
+		else if(i == MAX_CHAR) n = mem[i-1] ;
 		else mem[i] = mem[i-1] ;
 	}
 	return n ;
@@ -54,18 +57,18 @@ int mem_back(){
 
 int mem_used_len(){ 
 	int l = 0 ;
-	for(int i = 0; i < 25 ; i++) if(mem[i] != 0 && mem[i] != ' ') l++ ;
+	for(int i = 0; i < MAX_CHAR ; i++) if(mem[i] != 0 && mem[i] != ' ') l++ ;
 	return l;
 }
 
-void debug_mem(){ for(int i = 0; i < 25 ; i++) printf("%c, ", mem[i]) ; }
-void clear_mem(){ for(int i = 0; i < 25 ; i++) mem[i] = 0 ; }
+void debug_mem(){ for(int i = 0; i < MAX_CHAR ; i++) printf("%c, ", mem[i]) ; }
+void clear_mem(){ for(int i = 0; i < MAX_CHAR ; i++) mem[i] = 0 ; }
 //////////////////////// END MEMORY HANDLING
 
 
 //////////////////////// HANDLING EXITING
 int checkEnd(){
-	int len = 3 ;
+	int len = 4 ;
 	unsigned char word[4] = {'e', 'x', 'i', 't'} ;
 	int flag = mem_used_len() <= len ;
 	while(len--){
@@ -92,22 +95,35 @@ int checkCharType(unsigned char c){
 }
 
 int checkCharBlank(unsigned char c){
-    return (c != 32) ;
+    return (c == 32) ;
 }
 
 void erase(){
 	// basckspace case
-    int n = checkCharType(mem_back()) ;
+    
+	//int n = checkCharType(mem_back()) ;
+	
+	int n = checkCharBlank(mem_back()) ;
+	
+	wnum -= !n ;
+
+	/*
     if(n == 1) ctA-- ;
     else if(n == 2) cta-- ;
     else cto--;
+	*/
 }
 void check(unsigned char c){
 	// int n = checkCharType(c) ;
 	int n = checkCharBlank(c) ;
 	
+	wnum += n ;
 
-	
+	/*
+	if(n == 1) ctA++ ;
+    else if(n == 2) cta++ ;
+    else cto++;
+	*/
 	
 	mem_push(c) ;
 }
