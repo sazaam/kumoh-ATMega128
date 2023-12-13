@@ -3,8 +3,9 @@
 #define F_CPU 16000000UL
 #include <util/delay.h>
 
-volatile unsigned int tick_cnt=0;
-volatile unsigned int speed=700;
+
+
+char digit[2] = {0x46, 0x70} ;
 
 int fnd[2] = {112, 70} ;
 
@@ -14,8 +15,13 @@ int fnd[2] = {112, 70} ;
 #define DOWN 0
 #define IDLE 2
 
-volatile unsigned int ind = -1;
+
+volatile unsigned int tick_cnt = 0 ;
+volatile unsigned int speed = 700 ;
+
 volatile unsigned int way = IDLE , lastway = IDLE ;
+
+volatile unsigned int ind = -1 ;
 volatile unsigned already = -1 ;
 
 int test = 0x01 ;
@@ -44,7 +50,7 @@ ISR(INT5_vect){
 
 ////////////////// DIRECTION
 
-void changeindex(int n){ ind = (MAX + (ind + n)) % MAX ; } ;
+void changeindex(int n){ ind = (MAX + (ind + n)) % MAX ; } ; 
 void upindex() { changeindex(1) ; };
 void downindex() { changeindex(-1) ; };
 
@@ -59,7 +65,6 @@ ISR(TIMER0_OVF_vect)
 	
 	if(++tick_cnt >= speed){
 		tick_cnt=0;
-
 		
 		// if enabled
 		if(way != IDLE){
@@ -68,8 +73,10 @@ ISR(TIMER0_OVF_vect)
 			lastway = way ;
 		}
 
+		
 	}
-	
+	PORTA = ind ;
+
 	
 }
 ////////////////// END TIMER INTERRUPT
@@ -80,9 +87,9 @@ void displayArrows(){
 	
 	
 	for(int i = 0 ; i < MAX ; i++){
-	
+		
 		if(i == ind) display(i, fnd[lastway]) ;
-		else display(i, 64);
+		else display(i, 0x00); 
 	
 	}
 }
@@ -106,14 +113,15 @@ int settings(){
 
 	/////////////  FND
 	DDRC 		= 0xFF ;
-	DDRG 		= 0x00 ;
+	DDRG 		= 0x0F ;
 	
 	///////////// INT Switch 4 + 5
 	DDRE 		= 0xCF ;
 	
 	/* Interrupt Enable + Mask */
+
+	EICRB 		= 0x0A ;	
 	EIMSK 		= 0x30 ;
-	EICRB 		= 0x0B ;
 	
 	
 	TCNT0=0x06;
@@ -132,6 +140,7 @@ int main() {
 	settings() ;
 	while(1){
 		displayArrows() ;
+
 	};
 
 
