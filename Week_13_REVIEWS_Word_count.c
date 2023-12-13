@@ -25,11 +25,10 @@ int putchar0(char c, FILE *stream)
 ////////////// REQUIRED
 volatile unsigned char mem[MAX_CHAR] = {0} ;
 volatile unsigned char c, oldc;
-volatile unsigned char cta = 0, ctA = 0, cto = 0;
 
 
 volatile unsigned int wnum = 0;
-
+int ind = 0 ;
 
 
 //////////////////////// MEMORY HANDLING
@@ -81,7 +80,9 @@ int checkEnd(){
 
 
 void exiting(){
-	printf("\n\t exiting...\n") ;
+	printf("\n\t Program is disabled now. \n") ;
+	//UCSR0B = 0x18;
+	// or 0x18 will only disable what is needed
 	UCSR0B = 0x0; // this disables the whole session it seems
 }
 /////////////////////// END HANDLING EXITING
@@ -94,56 +95,40 @@ int checkCharType(unsigned char c){
         (c >= 'a' && c <= 'z') ? 2 : 0 ;
 }
 
-int checkCharBlank(unsigned char c){
+int checkCharBlank(unsigned char c){ // returns 1 if anything other than space
     return (c == 32) ;
 }
 
 void erase(){
 	// basckspace case
-    
-	//int n = checkCharType(mem_back()) ;
-	
 	int n = checkCharBlank(mem_back()) ;
 	
-	wnum -= !n ;
-
-	/*
-    if(n == 1) ctA-- ;
-    else if(n == 2) cta-- ;
-    else cto--;
-	*/
+	wnum -= n ;
 }
+
 void check(unsigned char c){
-	// int n = checkCharType(c) ;
+	
 	int n = checkCharBlank(c) ;
 	
 	wnum += n ;
-
-	/*
-	if(n == 1) ctA++ ;
-    else if(n == 2) cta++ ;
-    else cto++;
-	*/
 	
 	mem_push(c) ;
 }
+
 void reset(){
-	cta = ctA = cto = 0 ;
 	wnum = 0 ;
+	ind = 0 ;
 	clear_mem() ;
     printf("\nPlease Input a Sentence :") ;
 }
+
 void evaluate(){
 	
 	// debug_mem() ; // if needed
 
 	if(checkEnd()) return exiting();
-	/*
-	printf("\n[lowercase] : %d\n", cta) ;
-	printf("\n[UPPERCASE] : %d\n", ctA) ;
-	printf("\n[!@#$~] : %d\n", cto) ;
-	*/
-	printf("\n >> number of words : %d\n", wnum + 1) ;
+	
+	printf("\n >> number of words : %d\n", ind ? wnum + 1 : wnum) ;
 }
 /////////////////////// END PROGRAM LOGIC
 
@@ -160,9 +145,11 @@ ISR(USART0_RX_vect){
 			break ;
 		case 127: 
 			printf("%c", c) ; 
+			ind-- ;
 			erase() ; 
 			break ;
 		default:
+			ind++ ;
 			printf("%c", c) ; 
 			check(c) ; 
 			break ;
