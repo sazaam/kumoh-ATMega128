@@ -12,6 +12,10 @@ unsigned char fnd_sel[4] = {0x01,0x02,0x04,0x08};
 static int putchar0(char c, FILE *stream);
 static FILE mystdout = FDEV_SETUP_STREAM(putchar0, NULL, _FDEV_SETUP_WRITE);
 
+
+
+
+
 int putchar0(char c, FILE *stream)
 {
 
@@ -43,22 +47,42 @@ int checkCharNum(unsigned char c){ // returns 1 if anything other than space
 }
 
 void erase(){
-	// basckspace case
 	dab = -1 ;
 }
 
 void save(unsigned char c){
-	
 	c = c - '0';
 	dab = c ;
-	
-
-	
-
 }
 
+////////////////////////////////////////// ADC READING
+void init_adc(){
+	ADMUX = 0x00;
+	ADCSRA = 0x87;
+}
+
+unsigned short read_adc(){
+
+	unsigned char adc_lo, adc_hi;
+	unsigned short value ;
+	ADCSRA |= (1 << ADSC) ;
+	
+	while((ADCSRA & ( 1 << ADIF)) == 0);
+	adc_lo = ADCL ;
+	adc_hi = ADCH ;
+	value = (adc_hi << 8)| adc_lo ;
+	return value;
+}
+/////////////////////////////////////////// END ADC READING
+
+
 void reset(){
+	
+
+	srand(read_adc()) ;
+
 	dab = -1 ;
+	
 	ans = rand() % 10 ;
 	printf("\nRandom Number : %d", ans) ;
 	
@@ -133,17 +157,24 @@ void init_uart()
     sei(); // enable global interrupt
 }
 
+
+
 void settings(){
 
-    init_uart() ;
+	init_uart() ;
+	init_adc() ;
+
+	
+
     stdout = &mystdout;
 
 }
 int main()
 {
     settings(); 
+
+
 	
-	srand(128);
 
 	reset() ;
 
