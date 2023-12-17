@@ -6,74 +6,92 @@
 #include <util/delay.h>
 
 
-#define MAX 8
-volatile unsigned char sw = 0, ct1 = 2, ct2 = 98, time = 0;
 
+volatile unsigned char sw = 0, time = 0;
 
+volatile int arr[4] = {-1,} ;
+volatile int change = 0 ;
 unsigned char digit[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7C, 0x07, 0x7F, 0x67};
+
+
 
 ISR(INT4_vect){
     cli();
     sw = 1;
-
     sei();
 }
 
 ISR(INT5_vect){
     cli();
     sw = 2;
-    
     sei();
 }
 
 void display(int n, int d){
 	
 	PORTG = 0x01 << n ;
-	PORTC = d ;
+	PORTC = d == -1 ? 0x0 : digit[d] ;
+	//PORTG = 0x0;
 
 }
-volatile int arr[4] = {0,} ;
-void build(int way, int ct){
-	
-	if(stage){
-		arr[0] = ct / 1000 ;
-		arr[1] = ct / 100 ;
-		arr[2] = ct / 10 ;
-		arr[3] = ct % 10 ;
-	}else{
-		arr[0] = ct / 1000 ;
-		arr[1] = ct / 100 ;
-		arr[2] = ct / 10 ;
-		arr[3] = ct % 10 ;
-		
+
+
+void build(int ct){
+
+	switch(sw){
+			
+		case 1 :
+			arr[3] = (ct / 1000)	 %	10;
+			arr[2] = (ct / 100)		 %	10;
+			arr[1] = (ct / 10)		 %	10;
+			arr[0] = (ct / 1)		 % 	10;
+		break;
+		case 2 :
+			arr[3] = -1 ;
+			arr[2] = -1 ;
+			arr[1] = (ct / 1000) 	% 	10;
+			arr[0] = (ct / 100)  	%   10;
+		break ;/**/
+		default:
+			arr[3] = -1 ;
+			arr[2] = -1 ;
+			arr[1] = -1 ;
+			arr[0] = -1 ;
 	}
-	
 }
 
 
-void displayADC(int stage, int ct){
+
+
+
+
+
+#define INTERVAL 50
+
+
+void displayADC(int ct){
 	
-	build(stage, ct) ;
-	
+	int time = 0 ;
+
 	while(1){
-		time++ ;
+		build(ct) ;
+		
+
+
+		///////// 7-SEGMENT
 		for(int i = 0 ; i < 4 ; i++){
 			int val = arr[i] ;
-		
-			if(val != -1) display(i, digit[val]) ;
-
-			_delay_ms(1);
+			display(i, val) ;
+			_delay_ms(2);
 		}
-
-		if(time >= 24) {	
-			time = 0 ;
-			break;
-		
-		}
-		
-	}
+		time ++;
+		if(time % INTERVAL == 0){ time = 0 ;}
+		///////// END 7-SEGMENT
+		if(time >= INTERVAL-1)
+			break ;
+        
+    }
 }
-
 
 unsigned short adc_lo = 0 ;
 unsigned short adc_hi = 0 ;
@@ -88,22 +106,12 @@ ISR(ADC_vect){
 	
 	unsigned short n = (adc_hi << 8 ) | adc_lo ;
 	
-	int margin = 50 ;
-	int state = 0 ;
-	if(n >= prev + margin){
-		state = 2 ;
-		prev = n ;
-	}else if(n <= prev - margin){
-		state = 1 ;
-		prev = n ;
-	}
+	displayADC(n) ;
 	
-	
-	displayADC(n, state, n - (int)prev) ;
-	
-	_delay_ms(500) ;
+	_delay_ms(1) ;
 	
 	sei() ;
+	
 }
 
 
@@ -131,9 +139,9 @@ int settings(){
 	DDRG = 0x0F;
 
 
-	/* INT */
+	/* INT */  //  Falling = 1-0 rising 1-1 (adds for each 4 & 5 switches) 
 	EICRB 				= 0x0A ; //  5 + 4 Falling should be 10 => 0b1010
-						 //  Falling = 1-0 rising 1-1 (adds for each 4 & 5 switches) 
+						 		 
 	EIMSK 				= 0x30 ;
 	
 	sei() ;
@@ -147,21 +155,12 @@ int settings(){
 int main(){
 	
 	settings() ;
-
+	
     while(1){
 		
 		ADCSRA |= (1 << ADSC) ;
-
-        switch(sw){
-            case 1:
-                counter1();
-            break;
-            case 2:
-                counter2();
-            break;
-
-        }
-		
 		_delay_ms(1) ;
+		
     }
 }
+
