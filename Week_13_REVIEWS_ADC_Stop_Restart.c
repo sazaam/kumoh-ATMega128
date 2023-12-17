@@ -37,7 +37,7 @@ void printADC(int ct){
 
 
 
-#define LIMIT 1000
+#define LIMIT 870
 #define INTERVAL 5000
 
 volatile unsigned int stopped = 0 ;
