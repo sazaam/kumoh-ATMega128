@@ -3,9 +3,8 @@
 #define F_CPU 16000000UL
 #include <avr/interrupt.h>
 #include <util/delay.h>
-unsigned char digit[4] = {0x76,0x79,0x38,0x73};
-unsigned char fnd_sel[4] = {0x01,0x02,0x04,0x08};
 
+#define NULL 0
 static int putchar0(char c, FILE *stream);
 static FILE mystdout = FDEV_SETUP_STREAM(putchar0, NULL, _FDEV_SETUP_WRITE);
 
@@ -19,6 +18,11 @@ int putchar0(char c, FILE *stream)
 	UDR0 = c;
 	return 0;
 }
+
+
+unsigned char digit[4] = {0x76,0x79,0x38,0x73};
+unsigned char fnd_sel[4] = {0x01,0x02,0x04,0x08};
+
 
 #define MAX_CHAR 25
 
