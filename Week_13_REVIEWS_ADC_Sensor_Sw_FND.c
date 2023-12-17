@@ -132,7 +132,8 @@ int settings(){
 
 
 	/* INT */
-	EICRB 				= 0x0A ; //  5 + 4 Falling  => 0101
+	EICRB 				= 0x0A ; //  5 + 4 Falling should be 10 => 0b1010
+						 //  Falling = 1-0 rising 1-1 (adds for each 4 & 5 switches) 
 	EIMSK 				= 0x30 ;
 	
 	sei() ;
