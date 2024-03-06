@@ -9,7 +9,7 @@ unsigned int fnd[4];
 int ON = 1 ; // ON Variable to turn off infinit rendering loop
 
 
-
+/*
 //////////////////////////////////////// CLASS EXAMPLE 1~1000 Counter
 
 #define FND_LEN 4
@@ -37,12 +37,12 @@ void fnd_arr(unsigned int arr[], int n){
 		arr[(int) l] = (int) (n / pow(10, l)) % 10 ; // replace multiple lines with calculations through powers of 10 => 10^3 = 1000 , 10^0 = 1
 		// But beware !! The arguments and the output of pow() are of type DOUBLE !!!
 	}
-	/*
-	arr[0] = (n / 1000) % 10 ;
-	arr[1] = (n / 100) % 10 ;
-	arr[2] = (n / 10) % 10 ;
-	arr[3] = (n / 1) % 10 ;
-	*/
+	
+	// arr[0] = (n / 1000) % 10 ;
+	// arr[1] = (n / 100) % 10 ;
+	// arr[2] = (n / 10) % 10 ;
+	// arr[3] = (n / 1) % 10 ;
+	
 	return 0 ;
 }
 
@@ -89,7 +89,7 @@ int main(){
 
 
 
-
+*/
 
 
 
@@ -192,5 +192,3 @@ int main(){
 
 
 }
-
-*/
