@@ -5,10 +5,6 @@
 
 
 
-
-
-
-
 ///////////////////////////// MISSION 1
 
 int main(void){
@@ -38,9 +34,11 @@ int main(void){
 	}
 }
 
+/**/
+
 ///////////////////////////// END MISSION 1
 
-/**/
+
 
 
 
@@ -48,8 +46,8 @@ int main(void){
 
 ///////////////////////////// MISSION 2
 
-/*
 
+/*
 int main(void){
 
 	DDRA = 0xFF ;
@@ -57,6 +55,8 @@ int main(void){
 
 	unsigned int n = 0x01 ;
 	int mark = 0 ;
+	
+	int way = 1 ; // SWITCH TO ZERO IN ORDER TO GO IN THE OTHER WAY	
 
 	while(1){
 		
@@ -65,19 +65,17 @@ int main(void){
 		
 				
 
-		PORTA = 0x01 << (7-mark) ;
+		PORTA = 0x01 << (way ? mark : 7 - mark) ;
 		
+		_delay_ms(500);
 		
-		_delay_ms(200);
-
 	}
 }
 
+
 */
 
-
 ///////////////////////////// END MISSION 2
-
 
 
 
