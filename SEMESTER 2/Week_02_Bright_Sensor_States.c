@@ -24,6 +24,10 @@ int putchar0(char c, FILE *stream){
 
 /*
 
+
+Extra : Implemented a Safe Margin system for the value to be in 'stable' state when within some predefined margin (here, 50 units)
+
+
 Extra : FND Display of the sensor Value
 
 Today I wanted to see if I could also display the value in the FND leds,
@@ -31,6 +35,8 @@ So ended up putting the display function in the ADC Interrupt,
 and transform _delay_ms(500) into 
 a more fancy loop calculation (10ms * 50)
 Since I need more frequency for the display loop.
+
+I still obtain 2 messages per second (500ms) and same for the calculations / logic
 
 */
 
@@ -155,12 +161,6 @@ ISR(ADC_vect){
 
 	cli() ;
 	
-	
-	
-	
-	
-	
-		
 	/// FND	
 	int max = FND_LEN - 1 ;
 	
