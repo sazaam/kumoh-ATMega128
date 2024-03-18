@@ -58,14 +58,8 @@ void initTIMER(){
 
 
 
-
-
-
-
-
-
 ///////////// LED TOGGLING
-volatile int tick = 0, ct = 22, res = 0;
+volatile int tick = 0, ct = 22;
 
 void LED_Toggle(){
 	
@@ -91,18 +85,12 @@ void fnd_arr(unsigned int arr[], int n){
 	
 	int one = ( n / 10 ) % 10 ;
 	arr[3] = one ;
-	// first number
 	
-	// => 
 	int two = n % 10 ;
 	arr[2] = two ;
-	// second number
 	
-	res = one * two ;
-		// result decimal
+	int res = one * two ;
 	arr[1] = ( res / 10 ) % 10 ;
-	
-		// result unit
 	arr[0] = res % 10 ;
 
 	return 0 ;
