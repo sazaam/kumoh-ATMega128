@@ -10,7 +10,15 @@
 
 
 
+/*
 
+MISSION :
+The initial state is at the 0 degree position, and after showing the settings menu,
+When you press 1, it rotates slightly towards -90 degrees from the current position (changes the OCR value by about -200, but it should not be smaller than 1400)
+When 2 is pressed, the implementation rotates to move slightly toward +90 degrees (the OCR value changes by about +200, but should not be greater than 4600).
+
+
+*/
 
 unsigned int ON = 1 ;
 
