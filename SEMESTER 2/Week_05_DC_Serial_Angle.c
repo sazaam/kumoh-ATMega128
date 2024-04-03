@@ -61,20 +61,22 @@ void end(){
 	ON = 0 ;
 }
 
+unsigned int angle = 0 ;
+
 void evaluate(unsigned char c){
 	switch(c){
-		
+		/// TODO Angle Calculation
 		case '1' :
 			motor(0x01) ;		
-			printf("Servo Motor Angle -90...") ;
+			printf("Servo Motor Angle (down) : 2800") ;
 		break ;
 		case '2' :
 			motor(0x00) ;
-			printf("Servo Motor Angle 0...") ;
+			printf("Servo Motor Angle (down) : 2600") ;
 		break ;
 		case '3' : 
 			motor(0x02) ;
-			printf("Servo Motor Angle +90...") ;
+			printf("Servo Motor Angle (up) : 2800") ;
 		break ;
 		default :
 			end() ;
