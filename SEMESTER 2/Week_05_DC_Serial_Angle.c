@@ -45,12 +45,21 @@ int putchar0(char c, FILE *stream)
 
 void motor(int ang){
 
-	OCR1A = 
-		ang == 0 ?
-			ANGLE_Z
-			: ang == 1 ?
-				ANGLE_M_90 :
-				ANGLE_P_90 ;
+	if(ang == ANGLE_Z){
+		OCR1A = ANGLE_Z ;
+		printf("Servo Motor Angle (zero) : %d", OCR1A) ;
+	}else if(ang == ANGLE_M_90){
+		if(OCR1A > ANGLE_M_90){
+			OCR1A -= 200 ;
+			
+		}
+		printf("Servo Motor Angle (down) : %d", OCR1A) ;
+	}else if(ang == ANGLE_P_90){
+		if(OCR1A < ANGLE_P_90){
+			OCR1A += 200 ;
+		}
+		printf("Servo Motor Angle (up) : %d", OCR1A) ;
+	}
 	PORTA = ang ;
 }
 
@@ -76,15 +85,15 @@ void evaluate(unsigned char c){
 		/// TODO Angle Calculation
 		case '1' :
 			motor(0x01) ;		
-			printf("Servo Motor Angle (down) : 2800") ;
+			
 		break ;
 		case '2' :
 			motor(0x00) ;
-			printf("Servo Motor Angle (down) : 2600") ;
+			
 		break ;
 		case '3' : 
 			motor(0x02) ;
-			printf("Servo Motor Angle (up) : 2800") ;
+			
 		break ;
 		default :
 			end() ;
